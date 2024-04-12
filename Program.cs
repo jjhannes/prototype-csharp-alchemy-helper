@@ -65,6 +65,7 @@ internal partial class Program
 
     private static void PromptEmptyInput()
     {
+        Console.WriteLine($"");
         Console.WriteLine("You've not provided any desired effects. Please provide a desired effect.");
     }
 
@@ -78,6 +79,7 @@ internal partial class Program
 
     private static void PromptInvalidInput(string input)
     {
+        Console.WriteLine($"");
         Console.WriteLine($"{input} is not a valid effect. Please provide a valid desired effect.");
     }
 
