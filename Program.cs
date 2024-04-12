@@ -181,5 +181,78 @@ internal partial class Program
 
         return commonEffects.ToArray();
     }
+    
+    private static string[] DetermineRecipe(string[] desiredEffects)
+    {
+        List<string> recipe = new List<string>();
+        string[] possibleIngredients = Program.GetIngredientsWithEffects(desiredEffects);
 
+        // Two ingredients
+        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
+        {
+            string primaryIngredient = possibleIngredients[primary];
+
+            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
+            {
+                string secondaryIngredient = possibleIngredients[secondary];
+                var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient ]);
+
+                if (desiredEffects.All(de => commonEffects.Contains(de)))
+                {
+                    recipe.AddRange([ primaryIngredient, secondaryIngredient ]);
+                }
+            }
+        }
+
+        // Three ingredients
+        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
+        {
+            string primaryIngredient = possibleIngredients[primary];
+
+            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
+            {
+                string secondaryIngredient = possibleIngredients[secondary];
+                
+                for (int tertiary = secondary + 1; tertiary < possibleIngredients.Count(); tertiary++)
+                {
+                    string tertiaryIngredient = possibleIngredients[tertiary];
+                    var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+
+                    if (desiredEffects.All(de => commonEffects.Contains(de)))
+                    {
+                        recipe.AddRange([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+                    }
+                }
+            }
+        }
+
+        // Four ingredients
+        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
+        {
+            string primaryIngredient = possibleIngredients[primary];
+
+            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
+            {
+                string secondaryIngredient = possibleIngredients[secondary];
+                
+                for (int tertiary = secondary + 1; tertiary < possibleIngredients.Count(); tertiary++)
+                {
+                    string tertiaryIngredient = possibleIngredients[tertiary];
+                    
+                    for (int quaternary = tertiary + 1; quaternary < possibleIngredients.Count(); quaternary++)
+                    {
+                        string quaternaryIngredient = possibleIngredients[quaternary];
+                        var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+
+                        if (desiredEffects.All(de => commonEffects.Contains(de)))
+                        {
+                            recipe.AddRange([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return recipe.ToArray();
+    }
 }
