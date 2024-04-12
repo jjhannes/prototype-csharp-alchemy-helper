@@ -28,6 +28,12 @@ internal partial class Program
             .Distinct()
             .ToArray();
         Console.WriteLine($"{badEffectIngredients.Count()} of {data.Count} ingredients have bad effects, and {badEffects.Count()} of {data.SelectMany(i => i.Value).Distinct().Count()} effects are bad.");
+
+        // Test get common effects
+        string[] ingredientsScalesAndKwamaCuttle = [ "Scales", "Kwama Cuttle" ];
+        string[] commonEffectsForScalesAndKwamaCuttle = GetCommonEffects(ingredientsScalesAndKwamaCuttle);
+
+        Console.WriteLine($"[{string.Join(" & ", ingredientsScalesAndKwamaCuttle)}] has common effects [{(commonEffectsForScalesAndKwamaCuttle.Any() ? string.Join(", ", commonEffectsForScalesAndKwamaCuttle) : "None")}]");
     }
 
     private static string[] GetEffectsForIngredient(string ingredient)
@@ -63,4 +69,36 @@ internal partial class Program
             effect.Contains("weakness") ||
             effect.Contains("vampirism");
     }
+
+    private static string[] GetCommonEffects(string[] ingredients)
+    {
+        List<KeyValuePair<string, string[]>> filteredIngredients = data
+            .Where(i => ingredients.Contains(i.Key))
+            .ToList();
+
+        List<string> commonEffects = new List<string>();
+
+        for (int primary = 0; primary < filteredIngredients.Count; primary++)
+        {
+            KeyValuePair<string, string[]> primaryIngredient = filteredIngredients[primary];
+
+            for (int secondary = primary + 1; secondary < filteredIngredients.Count; secondary++)
+            {
+                KeyValuePair<string, string[]> secondaryIngredient = filteredIngredients[secondary];
+
+                string[] matches = primaryIngredient.Value.Intersect(secondaryIngredient.Value).ToArray();
+
+                foreach (string match in matches)
+                {
+                    if (!commonEffects.Contains(match))
+                    {
+                        commonEffects.Add(match);
+                    }
+                }
+            }
+        }
+
+        return commonEffects.ToArray();
+    }
+
 }
