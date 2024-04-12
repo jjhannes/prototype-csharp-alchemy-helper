@@ -1,4 +1,4 @@
-public static partial class IngredientEffects
+internal static partial class Program
 {
     public static Dictionary<string, string[]> data = new Dictionary<string, string[]>()
     {
