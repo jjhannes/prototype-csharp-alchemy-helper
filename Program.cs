@@ -13,4 +13,12 @@ internal partial class Program
             .Single(i => i.Key == ingredient)
             .Value;
     }
+
+    private static string[] GetIngredientsWithEffects(string[] effects)
+    {
+        return data
+            .Where(i => i.Value.Intersect(effects).Any())
+            .Select(i => i.Key)
+            .ToArray();
+    }
 }
