@@ -4,6 +4,85 @@ internal partial class Program
 {
     private static void Main(string[] args)
     {
+        // Program.RunTests();
+        Program.PromptDesiredEffectsAndCalculateRecipe();
+    }
+
+    private static void PromptDesiredEffectsAndCalculateRecipe()
+    {
+        Program.PromptDescription();
+
+        List<string> desiredEffects = new List<string>();
+        bool done = false;
+        string? input = null;
+
+        while (!done)
+        {
+            input = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrEmpty(input))
+            {
+                // Done OR empty input
+                if (desiredEffects.Count < 1)
+                {
+                    // Empty input
+                    Program.PromptEmptyInput();
+
+                    continue;
+                }
+                else
+                {
+                    done = true;
+
+                    continue;
+                }
+            }
+            else
+            {
+                if (!ValidateDesiredEffect(input))
+                {
+                    Program.PromptInvalidInput(input);
+
+                    continue;
+                }
+                else
+                {
+                    desiredEffects.Add(input);
+                }
+            }
+        }
+
+        Console.WriteLine($"");
+        Console.WriteLine($"You desire a potion with the effects [{string.Join(", ", desiredEffects)}]");
+    }
+
+    private static void PromptDescription()
+    {
+        Console.WriteLine("What effects would you like your potion to have?");
+        Console.WriteLine("(Press <Enter> to submit and provide additional desired effects)");
+        Console.WriteLine("(Press <Enter> again, i.e. empty value, to accept your selection)");
+    }
+
+    private static void PromptEmptyInput()
+    {
+        Console.WriteLine("You've not provided any desired effects. Please provide a desired effect.");
+    }
+
+    private static bool ValidateDesiredEffect(string effect)
+    {
+        return data
+            .SelectMany(i => i.Value)
+            .Distinct()
+            .Any(e => e == effect);
+    }
+
+    private static void PromptInvalidInput(string input)
+    {
+        Console.WriteLine($"{input} is not a valid effect. Please provide a valid desired effect.");
+    }
+
+    private static void RunTests()
+    {
         // Check data structure
         Console.WriteLine($"There are {data.Count} ingredients with a total of {data.SelectMany(i => i.Value).Distinct().Count()} unique effects");
 
@@ -12,26 +91,26 @@ internal partial class Program
         string[] effectsWaterWalkingAndFortifySpeed = [ "Water Walking", "Fortify Speed" ];
 
         string[] rawEbonyEffects = Program.GetEffectsForIngredient(rawEbonyIngredient);
-        string[] ingredientsWithWaterWalkingAndFortifySpeed = GetIngredientsWithEffects(effectsWaterWalkingAndFortifySpeed);
+        string[] ingredientsWithWaterWalkingAndFortifySpeed = Program.GetIngredientsWithEffects(effectsWaterWalkingAndFortifySpeed);
 
         Console.WriteLine($"{rawEbonyIngredient} has effects [{string.Join(", ", rawEbonyEffects)}]");
         Console.WriteLine($"Ingredients with effects [{string.Join(" & ", effectsWaterWalkingAndFortifySpeed)}] are [{string.Join(", ", ingredientsWithWaterWalkingAndFortifySpeed)}]");
 
         // Test is bad effect
         string[] badEffectIngredients = data
-            .Where(i => i.Value.Any(e => IsBadEffect(e)))
+            .Where(i => i.Value.Any(e => Program.IsBadEffect(e)))
             .Select(i => i.Key)
             .ToArray();
         string[] badEffects = data
             .SelectMany(i => i.Value)
-            .Where(e => IsBadEffect(e))
+            .Where(e => Program.IsBadEffect(e))
             .Distinct()
             .ToArray();
         Console.WriteLine($"{badEffectIngredients.Count()} of {data.Count} ingredients have bad effects, and {badEffects.Count()} of {data.SelectMany(i => i.Value).Distinct().Count()} effects are bad.");
 
         // Test get common effects
         string[] ingredientsScalesAndKwamaCuttle = [ "Scales", "Kwama Cuttle" ];
-        string[] commonEffectsForScalesAndKwamaCuttle = GetCommonEffects(ingredientsScalesAndKwamaCuttle);
+        string[] commonEffectsForScalesAndKwamaCuttle = Program.GetCommonEffects(ingredientsScalesAndKwamaCuttle);
 
         Console.WriteLine($"[{string.Join(" & ", ingredientsScalesAndKwamaCuttle)}] has common effects [{(commonEffectsForScalesAndKwamaCuttle.Any() ? string.Join(", ", commonEffectsForScalesAndKwamaCuttle) : "None")}]");
     }
