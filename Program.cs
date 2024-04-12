@@ -52,13 +52,14 @@ internal partial class Program
             }
         }
         
-        string[][] possibleRecipes = Program.DetermineRecipe(desiredEffects.ToArray());
+        IEnumerable<Recipe> possibleRecipes = Program.DetermineRecipe(desiredEffects.ToArray());
 
         Console.WriteLine($"Possible recipes for potions with [{string.Join(" & ", desiredEffects)}]:");
 
-        foreach (string[] recipe in possibleRecipes)
+        foreach (Recipe recipe in possibleRecipes)
         {
-            Console.WriteLine($" - {string.Join(" + ", recipe)}");
+            Console.WriteLine($"{recipe}");
+            Console.WriteLine($"");
         }
     }
 
@@ -106,12 +107,12 @@ internal partial class Program
 
         // Test is bad effect
         string[] badEffectIngredients = data
-            .Where(i => i.Value.Any(e => Program.IsBadEffect(e)))
+            .Where(i => i.Value.Any(e => Functions.IsBadEffect(e)))
             .Select(i => i.Key)
             .ToArray();
         string[] badEffects = data
             .SelectMany(i => i.Value)
-            .Where(e => Program.IsBadEffect(e))
+            .Where(e => Functions.IsBadEffect(e))
             .Distinct()
             .ToArray();
         Console.WriteLine($"{badEffectIngredients.Count()} of {data.Count} ingredients have bad effects, and {badEffects.Count()} of {data.SelectMany(i => i.Value).Distinct().Count()} effects are bad.");
@@ -136,25 +137,6 @@ internal partial class Program
             .Where(i => i.Value.Intersect(effects).Any())
             .Select(i => i.Key)
             .ToArray();
-    }
-
-    private static bool IsBadEffect(string effect)
-    {
-        effect = effect.ToLower();
-
-        if (effect.Contains("cure") || effect.Contains("resist"))
-        {
-            return false;
-        }
-
-        return effect.Contains("burden") ||
-            effect.Contains("poison") ||
-            effect.Contains("blind") ||
-            effect.Contains("damage") ||
-            effect.Contains("drain") ||
-            effect.Contains("paralyz") ||
-            effect.Contains("weakness") ||
-            effect.Contains("vampirism");
     }
 
     private static string[] GetCommonEffects(string[] ingredients)
@@ -188,9 +170,9 @@ internal partial class Program
         return commonEffects.ToArray();
     }
     
-    private static string[][] DetermineRecipe(string[] desiredEffects)
+    private static IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
     {
-        List<string[]> recipe = new List<string[]>();
+        List<Recipe> recipe = new List<Recipe>();
         string[] possibleIngredients = Program.GetIngredientsWithEffects(desiredEffects);
 
         // Two ingredients
@@ -205,7 +187,7 @@ internal partial class Program
 
                 if (desiredEffects.All(de => commonEffects.Contains(de)))
                 {
-                    recipe.Add([ primaryIngredient, secondaryIngredient ]);
+                    recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient ], commonEffects));
                 }
             }
         }
@@ -226,7 +208,7 @@ internal partial class Program
 
                     if (desiredEffects.All(de => commonEffects.Contains(de)))
                     {
-                        recipe.Add([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+                        recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
                     }
                 }
             }
@@ -252,13 +234,15 @@ internal partial class Program
 
                         if (desiredEffects.All(de => commonEffects.Contains(de)))
                         {
-                            recipe.Add([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+                            recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
                         }
                     }
                 }
             }
         }
 
-        return recipe.ToArray();
+        return recipe;
     }
+
+    
 }
