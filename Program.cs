@@ -51,9 +51,15 @@ internal partial class Program
                 }
             }
         }
+        
+        string[][] possibleRecipes = Program.DetermineRecipe(desiredEffects.ToArray());
 
-        Console.WriteLine($"");
-        Console.WriteLine($"You desire a potion with the effects [{string.Join(", ", desiredEffects)}]");
+        Console.WriteLine($"Possible recipes for potions with [{string.Join(" & ", desiredEffects)}]:");
+
+        foreach (string[] recipe in possibleRecipes)
+        {
+            Console.WriteLine($" - {string.Join(" + ", recipe)}");
+        }
     }
 
     private static void PromptDescription()
@@ -182,9 +188,9 @@ internal partial class Program
         return commonEffects.ToArray();
     }
     
-    private static string[] DetermineRecipe(string[] desiredEffects)
+    private static string[][] DetermineRecipe(string[] desiredEffects)
     {
-        List<string> recipe = new List<string>();
+        List<string[]> recipe = new List<string[]>();
         string[] possibleIngredients = Program.GetIngredientsWithEffects(desiredEffects);
 
         // Two ingredients
@@ -199,7 +205,7 @@ internal partial class Program
 
                 if (desiredEffects.All(de => commonEffects.Contains(de)))
                 {
-                    recipe.AddRange([ primaryIngredient, secondaryIngredient ]);
+                    recipe.Add([ primaryIngredient, secondaryIngredient ]);
                 }
             }
         }
@@ -220,7 +226,7 @@ internal partial class Program
 
                     if (desiredEffects.All(de => commonEffects.Contains(de)))
                     {
-                        recipe.AddRange([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+                        recipe.Add([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
                     }
                 }
             }
@@ -246,7 +252,7 @@ internal partial class Program
 
                         if (desiredEffects.All(de => commonEffects.Contains(de)))
                         {
-                            recipe.AddRange([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+                            recipe.Add([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
                         }
                     }
                 }
