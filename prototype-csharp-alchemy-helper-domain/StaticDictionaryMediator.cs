@@ -1,9 +1,12 @@
-namespace prototype_csharp_alchemy_helper_domain;
-
 using prototype_csharp_alchemy_helper_datastore;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("prototype-csharp-alchemy-helper-domain-tests")]
+namespace prototype_csharp_alchemy_helper_domain;
 
 public class StaticDictionaryMediator : IMediator
 {
+    
     private readonly IRepo _datastore;
 
     public StaticDictionaryMediator()
@@ -30,7 +33,7 @@ public class StaticDictionaryMediator : IMediator
             effect.Contains("vampirism");
     }
 
-    private string[] GetCommonEffects(string[] ingredients)
+    internal string[] GetCommonEffects(string[] ingredients)
     {
         List<KeyValuePair<string, string[]>> filteredIngredients = _datastore.GetEverything()
             .Where(i => ingredients.Contains(i.Key))
@@ -61,13 +64,13 @@ public class StaticDictionaryMediator : IMediator
         return commonEffects.ToArray();
     }
     
-    private bool IsIngredient(string ingredient)
+    internal bool IsIngredient(string ingredient)
     {
         return this._datastore.GetEverything()
             .ContainsKey(ingredient);
     }
 
-    private bool IsEffect(string effect)
+    internal bool IsEffect(string effect)
     {
         return this._datastore.GetEverything()
             .SelectMany(i => i.Value)
@@ -75,12 +78,12 @@ public class StaticDictionaryMediator : IMediator
             .Any(e => e == effect);
     }
 
-    private string[] GetIngredientEffects(string ingredient)
+    internal string[] GetIngredientEffects(string ingredient)
     {
         return this._datastore.GetEverything()[ingredient];
     }
 
-    private string[] GetIngredientsWithEffects(string[] effects)
+    internal string[] GetIngredientsWithEffects(string[] effects)
     {
         return this._datastore.GetEverything()
             .Where(i => i.Value.Intersect(effects).Any())
