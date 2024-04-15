@@ -1,5 +1,5 @@
 {
     "Datastore": {
-        "Class": "prototype_csharp_alchemy_helper_datastore,StaticDictionaryRepo"
+        "Class": "prototype_csharp_alchemy_helper_domain,StaticDictionaryMediator"
     }
 }
