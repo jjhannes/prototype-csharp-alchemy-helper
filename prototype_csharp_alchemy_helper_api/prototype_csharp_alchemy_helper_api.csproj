@@ -15,9 +15,4 @@
     <ProjectReference Include="..\prototype-csharp-alchemy-helper-domain\prototype-csharp-alchemy-helper-domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
