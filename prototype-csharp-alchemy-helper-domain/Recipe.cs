@@ -13,12 +13,12 @@ public class Recipe
 
     public string[] GoodEffects
     { 
-        get => _isBadPredicate == null ? new string[0] : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
+        get => this._isBadPredicate == null ? new string[0] : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
     }
 
     public string[] BadEffects 
     { 
-        get => _isBadPredicate == null ? new string[0] : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
+        get => this._isBadPredicate == null ? new string[0] : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
     }
 
     public Recipe(string[] ingredients, string[] effects)
