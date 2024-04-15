@@ -11,14 +11,14 @@ public class Recipe
 
     public string[] Effects { get; internal set; }
 
-    public string[]? GoodEffects
+    public string[] GoodEffects
     { 
-        get => _isBadPredicate == null ? null : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
+        get => _isBadPredicate == null ? new string[0] : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
     }
 
-    public string[]? BadEffects 
+    public string[] BadEffects 
     { 
-        get => _isBadPredicate == null ? null : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
+        get => _isBadPredicate == null ? new string[0] : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
     }
 
     public Recipe(string[] ingredients, string[] effects)
@@ -44,7 +44,7 @@ public class Recipe
         stringifiedEntity.Append(Environment.NewLine);
 
         // Format good effects
-        if (this.GoodEffects != null)
+        if (this.GoodEffects.Count() > 0)
         {
             stringifiedEntity.Append($"Grants [{string.Join(" & ", this.GoodEffects)}]");
             stringifiedEntity.Append(Environment.NewLine);
@@ -56,7 +56,7 @@ public class Recipe
         }
 
         // Format bad effects
-        if (this.BadEffects != null)
+        if (this.BadEffects.Count() > 0)
         {
             if (this.BadEffects.Length > 0)
             {
