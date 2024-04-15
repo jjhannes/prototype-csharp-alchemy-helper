@@ -6,7 +6,6 @@ namespace prototype_csharp_alchemy_helper_domain;
 
 public class StaticDictionaryMediator : IMediator
 {
-    
     private readonly IRepo _datastore;
 
     public StaticDictionaryMediator()
@@ -35,7 +34,7 @@ public class StaticDictionaryMediator : IMediator
 
     internal string[] GetCommonEffects(string[] ingredients)
     {
-        List<KeyValuePair<string, string[]>> filteredIngredients = _datastore.GetEverything()
+        List<KeyValuePair<string, string[]>> filteredIngredients = this._datastore.GetEverything()
             .Where(i => ingredients.Contains(i.Key))
             .ToList();
 
@@ -64,12 +63,14 @@ public class StaticDictionaryMediator : IMediator
         return commonEffects.ToArray();
     }
     
+    [Obsolete]
     internal bool IsIngredient(string ingredient)
     {
         return this._datastore.GetEverything()
             .ContainsKey(ingredient);
     }
 
+    [Obsolete]
     internal bool IsEffect(string effect)
     {
         return this._datastore.GetEverything()
@@ -78,6 +79,7 @@ public class StaticDictionaryMediator : IMediator
             .Any(e => e == effect);
     }
 
+    [Obsolete]
     internal string[] GetIngredientEffects(string ingredient)
     {
         return this._datastore.GetEverything()[ingredient];
