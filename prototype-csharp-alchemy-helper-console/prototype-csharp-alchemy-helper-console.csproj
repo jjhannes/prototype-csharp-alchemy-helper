@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\prototype-csharp-alchemy-helper-domain\prototype-csharp-alchemy-helper-domain.csproj" />
+    <ProjectReference Include="..\prototype-csharp-alchemy-helper-datastore\prototype-csharp-alchemy-helper-datastore.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>prototype_csharp_alchemy_helper_console</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

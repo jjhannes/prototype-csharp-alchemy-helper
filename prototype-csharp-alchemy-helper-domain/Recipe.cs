@@ -1,6 +1,8 @@
+namespace prototype_csharp_alchemy_helper_domain;
+
 using System.Text;
 
-internal class Recipe
+public class Recipe
 {
     public string[] Ingredients { get; set; }
 
@@ -8,7 +10,7 @@ internal class Recipe
 
     public string[] BadEffects { get; set; }
 
-    internal Recipe(string[] ingredients, string[] effects)
+    public Recipe(string[] ingredients, string[] effects)
     {
         this.Ingredients = ingredients;
         this.GoodEffects = effects.Where(e => !Functions.IsBadEffect(e)).ToArray();

@@ -1,4 +1,7 @@
-﻿
+﻿namespace prototype_csharp_alchemy_helper_console;
+
+using prototype_csharp_alchemy_helper_domain;
+using static prototype_csharp_alchemy_helper_datastore.IngredientEffects;
 
 internal partial class Program
 {

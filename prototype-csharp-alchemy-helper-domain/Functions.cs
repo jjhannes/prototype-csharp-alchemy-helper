@@ -1,6 +1,8 @@
-internal static class Functions
+namespace prototype_csharp_alchemy_helper_domain;
+
+public static class Functions
 {
-    internal static bool IsBadEffect(string effect)
+    public static bool IsBadEffect(string effect)
     {
         effect = effect.ToLower();
 

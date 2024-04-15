@@ -1,4 +1,6 @@
-internal static partial class Program
+namespace prototype_csharp_alchemy_helper_datastore;
+
+public static class IngredientEffects
 {
     public static Dictionary<string, string[]> data = new Dictionary<string, string[]>()
     {
