@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using prototype_csharp_alchemy_helper_api.Models;
 
-namespace prototype_csharp_alchemy_helper_api;
+namespace prototype_csharp_alchemy_helper_api.Controllers;
 
 [ApiController]
 public class WeatherForecasts
