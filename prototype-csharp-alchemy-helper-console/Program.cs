@@ -1,10 +1,11 @@
 ﻿namespace prototype_csharp_alchemy_helper_console;
 
 using prototype_csharp_alchemy_helper_domain;
-using static prototype_csharp_alchemy_helper_datastore.IngredientEffects;
 
 internal partial class Program
 {
+    private static IMediator _mediator = new StaticDictionaryMediator();
+
     private static void Main(string[] args)
     {
         // Program.RunTests();
@@ -42,27 +43,26 @@ internal partial class Program
             }
             else
             {
-                if (!ValidateDesiredEffect(input))
-                {
-                    Program.PromptInvalidInput(input);
-
-                    continue;
-                }
-                else
-                {
-                    desiredEffects.Add(input);
-                }
+                desiredEffects.Add(input);
             }
         }
         
-        IEnumerable<Recipe> possibleRecipes = Program.DetermineRecipe(desiredEffects.ToArray());
+        IEnumerable<Recipe> possibleRecipes = Program._mediator.DetermineRecipe(desiredEffects.ToArray());
 
-        Console.WriteLine($"Possible recipes for potions with [{string.Join(" & ", desiredEffects)}]:");
-
-        foreach (Recipe recipe in possibleRecipes)
+        if (possibleRecipes.Count() < 1)
         {
-            Console.WriteLine($"{recipe}");
-            Console.WriteLine($"");
+            Console.WriteLine($"There are no recipes that will grant [{string.Join(" & ", desiredEffects)}]");
+        }
+        else
+        {
+            Console.WriteLine($"There are {possibleRecipes.Count()} recipes that will grant [{string.Join(" & ", desiredEffects)}]:");
+            Console.WriteLine();
+
+            foreach (Recipe recipe in possibleRecipes)
+            {
+                Console.WriteLine($"{recipe}");
+                Console.WriteLine($"");
+            }
         }
     }
 
@@ -79,173 +79,40 @@ internal partial class Program
         Console.WriteLine("You've not provided any desired effects. Please provide a desired effect.");
     }
 
-    private static bool ValidateDesiredEffect(string effect)
-    {
-        return data
-            .SelectMany(i => i.Value)
-            .Distinct()
-            .Any(e => e == effect);
-    }
+    // private static void RunTests()
+    // {
+    //     Dictionary<string, string[]> data = IngredientEffects.GetEverything();
 
-    private static void PromptInvalidInput(string input)
-    {
-        Console.WriteLine($"");
-        Console.WriteLine($"{input} is not a valid effect. Please provide a valid desired effect.");
-    }
+    //     // Check data structure
+    //     Console.WriteLine($"There are {data.Count} ingredients with a total of {data.SelectMany(i => i.Value).Distinct().Count()} unique effects");
 
-    private static void RunTests()
-    {
-        // Check data structure
-        Console.WriteLine($"There are {data.Count} ingredients with a total of {data.SelectMany(i => i.Value).Distinct().Count()} unique effects");
+    //     // Test get ingredient effects & get ingredients with effects
+    //     string rawEbonyIngredient = "Raw Ebony";
+    //     string[] effectsWaterWalkingAndFortifySpeed = [ "Water Walking", "Fortify Speed" ];
 
-        // Test get ingredient effects & get ingredients with effects
-        string rawEbonyIngredient = "Raw Ebony";
-        string[] effectsWaterWalkingAndFortifySpeed = [ "Water Walking", "Fortify Speed" ];
+    //     string[] rawEbonyEffects = IngredientEffects.GetIngredientEffects(rawEbonyIngredient);
+    //     string[] ingredientsWithWaterWalkingAndFortifySpeed = IngredientEffects.GetIngredientsWithEffects(effectsWaterWalkingAndFortifySpeed);
 
-        string[] rawEbonyEffects = Program.GetEffectsForIngredient(rawEbonyIngredient);
-        string[] ingredientsWithWaterWalkingAndFortifySpeed = Program.GetIngredientsWithEffects(effectsWaterWalkingAndFortifySpeed);
+    //     Console.WriteLine($"{rawEbonyIngredient} has effects [{string.Join(", ", rawEbonyEffects)}]");
+    //     Console.WriteLine($"Ingredients with effects [{string.Join(" & ", effectsWaterWalkingAndFortifySpeed)}] are [{string.Join(", ", ingredientsWithWaterWalkingAndFortifySpeed)}]");
 
-        Console.WriteLine($"{rawEbonyIngredient} has effects [{string.Join(", ", rawEbonyEffects)}]");
-        Console.WriteLine($"Ingredients with effects [{string.Join(" & ", effectsWaterWalkingAndFortifySpeed)}] are [{string.Join(", ", ingredientsWithWaterWalkingAndFortifySpeed)}]");
+    //     // Test is bad effect
+    //     string[] badEffectIngredients = data
+    //         .Where(i => i.Value.Any(e => Repo.IsBadEffect(e)))
+    //         .Select(i => i.Key)
+    //         .ToArray();
+    //     string[] badEffects = data
+    //         .SelectMany(i => i.Value)
+    //         .Where(e => Repo.IsBadEffect(e))
+    //         .Distinct()
+    //         .ToArray();
+    //     Console.WriteLine($"{badEffectIngredients.Count()} of {data.Count} ingredients have bad effects, and {badEffects.Count()} of {data.SelectMany(i => i.Value).Distinct().Count()} effects are bad.");
 
-        // Test is bad effect
-        string[] badEffectIngredients = data
-            .Where(i => i.Value.Any(e => Functions.IsBadEffect(e)))
-            .Select(i => i.Key)
-            .ToArray();
-        string[] badEffects = data
-            .SelectMany(i => i.Value)
-            .Where(e => Functions.IsBadEffect(e))
-            .Distinct()
-            .ToArray();
-        Console.WriteLine($"{badEffectIngredients.Count()} of {data.Count} ingredients have bad effects, and {badEffects.Count()} of {data.SelectMany(i => i.Value).Distinct().Count()} effects are bad.");
+    //     // Test get common effects
+    //     string[] ingredientsScalesAndKwamaCuttle = [ "Scales", "Kwama Cuttle" ];
+    //     string[] commonEffectsForScalesAndKwamaCuttle = Program.GetCommonEffects(ingredientsScalesAndKwamaCuttle);
 
-        // Test get common effects
-        string[] ingredientsScalesAndKwamaCuttle = [ "Scales", "Kwama Cuttle" ];
-        string[] commonEffectsForScalesAndKwamaCuttle = Program.GetCommonEffects(ingredientsScalesAndKwamaCuttle);
+    //     Console.WriteLine($"[{string.Join(" & ", ingredientsScalesAndKwamaCuttle)}] has common effects [{(commonEffectsForScalesAndKwamaCuttle.Any() ? string.Join(", ", commonEffectsForScalesAndKwamaCuttle) : "None")}]");
+    // }
 
-        Console.WriteLine($"[{string.Join(" & ", ingredientsScalesAndKwamaCuttle)}] has common effects [{(commonEffectsForScalesAndKwamaCuttle.Any() ? string.Join(", ", commonEffectsForScalesAndKwamaCuttle) : "None")}]");
-    }
-
-    private static string[] GetEffectsForIngredient(string ingredient)
-    {
-        return data
-            .Single(i => i.Key == ingredient)
-            .Value;
-    }
-
-    private static string[] GetIngredientsWithEffects(string[] effects)
-    {
-        return data
-            .Where(i => i.Value.Intersect(effects).Any())
-            .Select(i => i.Key)
-            .ToArray();
-    }
-
-    private static string[] GetCommonEffects(string[] ingredients)
-    {
-        List<KeyValuePair<string, string[]>> filteredIngredients = data
-            .Where(i => ingredients.Contains(i.Key))
-            .ToList();
-
-        List<string> commonEffects = new List<string>();
-
-        for (int primary = 0; primary < filteredIngredients.Count; primary++)
-        {
-            KeyValuePair<string, string[]> primaryIngredient = filteredIngredients[primary];
-
-            for (int secondary = primary + 1; secondary < filteredIngredients.Count; secondary++)
-            {
-                KeyValuePair<string, string[]> secondaryIngredient = filteredIngredients[secondary];
-
-                string[] matches = primaryIngredient.Value.Intersect(secondaryIngredient.Value).ToArray();
-
-                foreach (string match in matches)
-                {
-                    if (!commonEffects.Contains(match))
-                    {
-                        commonEffects.Add(match);
-                    }
-                }
-            }
-        }
-
-        return commonEffects.ToArray();
-    }
-    
-    private static IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
-    {
-        List<Recipe> recipe = new List<Recipe>();
-        string[] possibleIngredients = Program.GetIngredientsWithEffects(desiredEffects);
-
-        // Two ingredients
-        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
-        {
-            string primaryIngredient = possibleIngredients[primary];
-
-            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
-            {
-                string secondaryIngredient = possibleIngredients[secondary];
-                var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient ]);
-
-                if (desiredEffects.All(de => commonEffects.Contains(de)))
-                {
-                    recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient ], commonEffects));
-                }
-            }
-        }
-
-        // Three ingredients
-        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
-        {
-            string primaryIngredient = possibleIngredients[primary];
-
-            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
-            {
-                string secondaryIngredient = possibleIngredients[secondary];
-                
-                for (int tertiary = secondary + 1; tertiary < possibleIngredients.Count(); tertiary++)
-                {
-                    string tertiaryIngredient = possibleIngredients[tertiary];
-                    var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
-
-                    if (desiredEffects.All(de => commonEffects.Contains(de)))
-                    {
-                        recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
-                    }
-                }
-            }
-        }
-
-        // Four ingredients
-        for (int primary = 0; primary < possibleIngredients.Count(); primary++)
-        {
-            string primaryIngredient = possibleIngredients[primary];
-
-            for (int secondary = primary + 1; secondary < possibleIngredients.Count(); secondary++)
-            {
-                string secondaryIngredient = possibleIngredients[secondary];
-                
-                for (int tertiary = secondary + 1; tertiary < possibleIngredients.Count(); tertiary++)
-                {
-                    string tertiaryIngredient = possibleIngredients[tertiary];
-                    
-                    for (int quaternary = tertiary + 1; quaternary < possibleIngredients.Count(); quaternary++)
-                    {
-                        string quaternaryIngredient = possibleIngredients[quaternary];
-                        var commonEffects = Program.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
-
-                        if (desiredEffects.All(de => commonEffects.Contains(de)))
-                        {
-                            recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
-                        }
-                    }
-                }
-            }
-        }
-
-        return recipe;
-    }
-
-    
 }

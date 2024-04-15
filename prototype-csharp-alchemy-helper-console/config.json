@@ -1,0 +1,5 @@
+{
+    "Datastore": {
+        "Class": "prototype_csharp_alchemy_helper_datastore,StaticDictionaryRepo"
+    }
+}

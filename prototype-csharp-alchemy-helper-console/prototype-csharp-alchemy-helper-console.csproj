@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\prototype-csharp-alchemy-helper-domain\prototype-csharp-alchemy-helper-domain.csproj" />
-    <ProjectReference Include="..\prototype-csharp-alchemy-helper-datastore\prototype-csharp-alchemy-helper-datastore.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

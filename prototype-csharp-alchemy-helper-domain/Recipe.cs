@@ -1,20 +1,38 @@
 namespace prototype_csharp_alchemy_helper_domain;
 
+using System.Dynamic;
 using System.Text;
 
 public class Recipe
 {
-    public string[] Ingredients { get; set; }
+    internal Func<string, bool>? _isBadPredicate { get; private set; }
 
-    public string[] GoodEffects { get; set; }
+    public string[] Ingredients { get; internal set; }
 
-    public string[] BadEffects { get; set; }
+    public string[] Effects { get; internal set; }
+
+    public string[]? GoodEffects
+    { 
+        get => _isBadPredicate == null ? null : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
+    }
+
+    public string[]? BadEffects 
+    { 
+        get => _isBadPredicate == null ? null : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
+    }
 
     public Recipe(string[] ingredients, string[] effects)
+        : this(ingredients, effects, null) { }
+
+    public Recipe(string[] ingredients, string[] effects, Func<string, bool>? isBadPredicate)
     {
         this.Ingredients = ingredients;
-        this.GoodEffects = effects.Where(e => !Functions.IsBadEffect(e)).ToArray();
-        this.BadEffects = effects.Where(e => Functions.IsBadEffect(e)).ToArray();
+        this.Effects = effects;
+
+        if (isBadPredicate != null)
+        {
+            this._isBadPredicate = isBadPredicate;
+        }
     }
 
     public override string ToString()
@@ -26,17 +44,32 @@ public class Recipe
         stringifiedEntity.Append(Environment.NewLine);
 
         // Format good effects
-        stringifiedEntity.Append($"Grants [{string.Join(" & ", this.GoodEffects)}]");
-        stringifiedEntity.Append(Environment.NewLine);
-
-        // Format bad effects
-        if (this.BadEffects.Length > 0)
+        if (this.GoodEffects != null)
         {
-            stringifiedEntity.Append($"But results in [{string.Join(" & ", this.BadEffects)}]");
+            stringifiedEntity.Append($"Grants [{string.Join(" & ", this.GoodEffects)}]");
+            stringifiedEntity.Append(Environment.NewLine);
         }
         else
         {
-            stringifiedEntity.Append($"And has no bad effects");
+            stringifiedEntity.Append($"Unfortunately good effects is undefined");
+            stringifiedEntity.Append(Environment.NewLine);
+        }
+
+        // Format bad effects
+        if (this.BadEffects != null)
+        {
+            if (this.BadEffects.Length > 0)
+            {
+                stringifiedEntity.Append($"But results in [{string.Join(" & ", this.BadEffects)}]");
+            }
+            else
+            {
+                stringifiedEntity.Append($"And has no bad effects");
+            }
+        }
+        else
+        {
+            stringifiedEntity.Append($"But bad effects is undefined");
         }
 
         return stringifiedEntity.ToString();
