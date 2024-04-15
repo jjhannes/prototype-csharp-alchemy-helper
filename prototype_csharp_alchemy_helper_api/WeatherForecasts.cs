@@ -1,5 +1,8 @@
-﻿namespace prototype_csharp_alchemy_helper_api;
+﻿using Microsoft.AspNetCore.Mvc;
 
+namespace prototype_csharp_alchemy_helper_api;
+
+[ApiController]
 public class WeatherForecasts
 {
     private static string[] summaries = new[]
@@ -7,21 +10,19 @@ public class WeatherForecasts
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    public static void ConfigureRoutes(WebApplication app)
+    [HttpGet()]
+    [Route("/weatherforecast")]
+    public ActionResult<WeatherForecast[]> GetWeatherForecasts()
     {
-        app.MapGet("/weatherforecast", () =>
-        {
-            var forecast =  Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-                .ToArray();
-            return forecast;
-        })
-        .WithName("GetWeatherForecast")
-        .WithOpenApi();
+        var forecast = Enumerable.Range(1, 5).Select(index =>
+            new WeatherForecast
+            (
+                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                Random.Shared.Next(-20, 55),
+                summaries[Random.Shared.Next(summaries.Length)]
+            ))
+            .ToArray();
+
+        return forecast;
     }
 }
