@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prototype-csharp-alchemy-he
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prototype-csharp-alchemy-helper-domain-tests", "prototype-csharp-alchemy-helper-domain-tests\prototype-csharp-alchemy-helper-domain-tests.csproj", "{AAC5EB49-F5C3-4256-A78C-01EF3373045C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prototype_csharp_alchemy_helper_api", "prototype_csharp_alchemy_helper_api\prototype_csharp_alchemy_helper_api.csproj", "{3DB17643-4D15-48FA-B968-1605988F41C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AAC5EB49-F5C3-4256-A78C-01EF3373045C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAC5EB49-F5C3-4256-A78C-01EF3373045C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAC5EB49-F5C3-4256-A78C-01EF3373045C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DB17643-4D15-48FA-B968-1605988F41C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB17643-4D15-48FA-B968-1605988F41C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB17643-4D15-48FA-B968-1605988F41C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB17643-4D15-48FA-B968-1605988F41C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
