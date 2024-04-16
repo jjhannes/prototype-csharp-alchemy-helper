@@ -15,7 +15,7 @@ public class Potions
     }
 
     [HttpGet]
-    [Route("/potions/recipes/with-effects")]
+    [Route("/csapi/v1/potions/recipes/with-effects")]
     public ActionResult GetRecipesGivenDesiredEffects([FromQuery(Name = "de")]string rawDesiredEffects)
     {
         if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
