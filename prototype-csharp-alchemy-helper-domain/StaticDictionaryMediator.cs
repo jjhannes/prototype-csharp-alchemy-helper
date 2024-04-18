@@ -94,9 +94,19 @@ public class StaticDictionaryMediator : IMediator
     }
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
+        => this.DetermineRecipe(desiredEffects, new string[0]);
+
+    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients)
     {
         List<Recipe> recipe = new List<Recipe>();
         string[] possibleIngredients = this.GetIngredientsWithEffects(desiredEffects);
+
+        if (excludedIngredients.Any())
+        {
+            possibleIngredients = possibleIngredients
+                .Where(pi => !excludedIngredients.Any(ei => ei == pi))
+                .ToArray();
+        }
 
         // Two ingredients
         for (int primary = 0; primary < possibleIngredients.Count(); primary++)
