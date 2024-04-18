@@ -97,12 +97,18 @@ public class StaticDictionaryMediator : IMediator
     }
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
-        => this.DetermineRecipe(desiredEffects, new string[0], false);
+        => this.DetermineRecipe(desiredEffects, new string[0], false, false);
+
+    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, bool exactlyMatchDesiredEffects)
+        => this.DetermineRecipe(desiredEffects, new string[0], false, exactlyMatchDesiredEffects);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients)
-        => this.DetermineRecipe(desiredEffects, excludedIngredients, false);
+        => this.DetermineRecipe(desiredEffects, excludedIngredients, false, false);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions)
+        => this.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, false);
+
+    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects)
     {
         List<Recipe> viableRecipes = new List<Recipe>();
         string[] possibleIngredients = this.GetIngredientsWithEffects(desiredEffects);
@@ -198,6 +204,20 @@ public class StaticDictionaryMediator : IMediator
             if (countBeforeFilter != viableRecipes.Count)
             {
                 this._logger.LogWarning($"${countBeforeFilter - viableRecipes.Count} of ${countBeforeFilter} recipies with bad effects filtered out.");
+            }
+        }
+
+        if (exactlyMatchDesiredEffects)
+        {
+            int countBeforeFilter = viableRecipes.Count;
+
+            viableRecipes = viableRecipes
+                .Where(vr => new HashSet<string>(vr.Effects).SetEquals(desiredEffects))
+                .ToList();
+
+            if (countBeforeFilter != viableRecipes.Count)
+            {
+                this._logger.LogWarning($"{countBeforeFilter - viableRecipes.Count} of {countBeforeFilter} recipies with additional good effects filtered out.");
             }
         }
 

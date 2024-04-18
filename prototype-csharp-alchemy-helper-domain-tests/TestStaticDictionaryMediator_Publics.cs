@@ -74,5 +74,27 @@ public class TestStaticDictionaryMediator_Publics
                 Assert.Fail($"{nameof(this._mediator)} is not initialised");
             }
         }
+
+        [TestMethod]
+        [DataRow(new string[] { "Swift Swim", "Water Breathing", "Restore Fatigue" }, 5)]
+        [DataRow(new string[] { "Fortify Speed", "Water Walking" }, 22)]
+        [DataRow(new string[] { "Restore Health", "Fortify Health" }, 66)]
+        [DataRow(new string[] { "Restore Magicka", "Fortify Magicka" }, 66)]
+        public void DesiredEffectsExactlyMatched(string[] desiredEffects, int expectedRecipeCount)
+        {
+            if (this._mediator != null)
+            {
+                var viableRecipes = this._mediator.DetermineRecipe(desiredEffects, true);
+
+                Assert.AreEqual(expectedRecipeCount, viableRecipes.Count());
+                Assert.IsTrue(viableRecipes.All(vr => vr.Effects.Count() == desiredEffects.Count()));
+                Assert.IsTrue(viableRecipes.All(r => desiredEffects.All(de => r.Effects.Any(re => re == de))));
+                Assert.IsTrue(desiredEffects.All(de => viableRecipes.All(r => r.Effects.Any(re => re == de))));
+            }
+            else
+            {
+                Assert.Fail($"{nameof(this._mediator)} is not initialised");
+            }
+        }
     }
 }

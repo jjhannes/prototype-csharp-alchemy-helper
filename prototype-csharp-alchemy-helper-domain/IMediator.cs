@@ -4,5 +4,5 @@ public interface IMediator
 {
     IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects);
     
-    IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions);
+    IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects);
 }

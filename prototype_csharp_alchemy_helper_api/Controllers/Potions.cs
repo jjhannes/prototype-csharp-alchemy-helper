@@ -11,7 +11,8 @@ public class Potions : Controller
     {
         { "desiredEffects", "de" },
         { "excludedIngredients", "ei" },
-        { "excludeBadPotions", "ebp" }
+        { "excludeBadPotions", "ebp" },
+        { "exactlyMatchDesiredEffects", "emde" }
     };
 
     private IMediator _mediator;
@@ -28,6 +29,7 @@ public class Potions : Controller
         string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
         string? rawExcludedIngredients = this.HttpContext.Request.Query[this.parameterNames["excludedIngredients"]];
         string? rawExcludeBadPotions = this.HttpContext.Request.Query[this.parameterNames["excludeBadPotions"]];
+        string? rawExactlyMatchDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["exactlyMatchDesiredEffects"]];
 
         if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
         {
@@ -40,6 +42,7 @@ public class Potions : Controller
             .ToArray();
         string[] excludedIngredients = new string[0];
         bool excludeBadPotions = false;
+        bool exactlyMatchDesiredEffects = false;
 
         if (rawExcludedIngredients != null && rawExcludedIngredients.Length > 0)
         {
@@ -56,7 +59,14 @@ public class Potions : Controller
                 rawExcludeBadPotions.ToLower() == "1";
         }
 
-        IEnumerable<Recipe> viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions);
+        if (!string.IsNullOrEmpty(rawExactlyMatchDesiredEffects))
+        {
+            exactlyMatchDesiredEffects =
+                rawExactlyMatchDesiredEffects.ToLower() == "true" ||
+                rawExactlyMatchDesiredEffects.ToLower() == "1";
+        }
+
+        IEnumerable<Recipe> viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
         CollectionResponse<Recipe> responsePayload = new CollectionResponse<Recipe>(viableRecipes);
 
         return new OkObjectResult(responsePayload);
