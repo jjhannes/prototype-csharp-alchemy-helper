@@ -1,18 +1,28 @@
-﻿namespace prototype_csharp_alchemy_helper_console;
+﻿using prototype_csharp_alchemy_helper_domain;
+using Microsoft.Extensions.Logging;
 
-using prototype_csharp_alchemy_helper_domain;
+namespace prototype_csharp_alchemy_helper_console;
 
 internal partial class Program
 {
-    private static IMediator _mediator = new StaticDictionaryMediator();
+
+    private static IMediator? _mediator;
 
     private static void Main(string[] args)
     {
+        ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        ILogger<StaticDictionaryMediator> logger = loggerFactory.CreateLogger<StaticDictionaryMediator>();
+        Program._mediator = new StaticDictionaryMediator(logger);
         Program.PromptDesiredEffectsAndCalculateRecipe();
     }
 
     private static void PromptDesiredEffectsAndCalculateRecipe()
     {
+        if (Program._mediator == null)
+        {
+            throw new Exception($"{nameof(Program._mediator)} not initialised!");
+        }
+        
         Program.PromptDescription();
 
         List<string> desiredEffects = new List<string>();

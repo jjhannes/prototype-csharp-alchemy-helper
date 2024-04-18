@@ -1,12 +1,18 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prototype_csharp_alchemy_helper_domain;
 
 namespace prototype_csharp_alchemy_helper_api;
 
 [ApiController]
-public class Potions
+public class Potions : Controller
 {
+    readonly Dictionary<string, string> parameterNames = new Dictionary<string, string>
+    {
+        { "desiredEffects", "de" },
+        { "excludedIngredients", "ei" }
+    };
+
     private IMediator _mediator;
     
     public Potions(IMediator mediator)
@@ -16,10 +22,11 @@ public class Potions
 
     [HttpGet]
     [Route("/csapi/v1/potions/recipes/with-effects")]
-    public ActionResult GetRecipesGivenDesiredEffects(
-        [FromQuery(Name = "de")] string rawDesiredEffects,
-        [FromQuery(Name = "ee")] string? rawExcludedIngredients = null)
+    public ActionResult GetRecipesGivenDesiredEffects()
     {
+        string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
+        string? rawExcludedIngredients = this.HttpContext.Request.Query[this.parameterNames["excludedIngredients"]];
+
         if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
         {
             return new BadRequestResult();

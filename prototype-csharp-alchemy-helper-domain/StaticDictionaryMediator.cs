@@ -1,15 +1,18 @@
 using prototype_csharp_alchemy_helper_datastore;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 [assembly: InternalsVisibleTo("prototype-csharp-alchemy-helper-domain-tests")]
 namespace prototype_csharp_alchemy_helper_domain;
 
 public class StaticDictionaryMediator : IMediator
 {
+    private readonly ILogger<StaticDictionaryMediator> _logger;
     private readonly IRepo _datastore;
 
-    public StaticDictionaryMediator()
+    public StaticDictionaryMediator(ILogger<StaticDictionaryMediator> logger)
     {
+        this._logger = logger;
         this._datastore = new StaticDictionaryRepo();
     }
 
@@ -103,9 +106,16 @@ public class StaticDictionaryMediator : IMediator
 
         if (excludedIngredients.Any())
         {
+            int countBeforeFilter = possibleIngredients.Count();
+
             possibleIngredients = possibleIngredients
                 .Where(pi => !excludedIngredients.Any(ei => ei == pi))
                 .ToArray();
+
+            if (countBeforeFilter != possibleIngredients.Count())
+            {
+                this._logger.LogWarning($"{countBeforeFilter - possibleIngredients.Count()} of {countBeforeFilter} excluded ingredients filtered out.");
+            }
         }
 
         // Two ingredients
