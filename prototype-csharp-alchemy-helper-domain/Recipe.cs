@@ -13,12 +13,22 @@ public class Recipe
 
     public string[] GoodEffects
     { 
-        get => this._isBadPredicate == null ? new string[0] : this.Effects.Where(e => !this._isBadPredicate(e)).ToArray();
+        get => this._isBadPredicate == null ? 
+            new string[0] : 
+            this.Effects
+                .Where(e => !this._isBadPredicate(e))
+                .OrderBy(e => e)
+                .ToArray();
     }
 
     public string[] BadEffects 
     { 
-        get => this._isBadPredicate == null ? new string[0] : this.Effects.Where(e => this._isBadPredicate(e)).ToArray();
+        get => this._isBadPredicate == null ? 
+            new string[0] : 
+            this.Effects
+                .Where(e => this._isBadPredicate(e))
+                .OrderBy(e => e)
+                .ToArray();
     }
 
     public Recipe(string[] ingredients, string[] effects)
@@ -26,8 +36,8 @@ public class Recipe
 
     public Recipe(string[] ingredients, string[] effects, Func<string, bool>? isBadPredicate)
     {
-        this.Ingredients = ingredients;
-        this.Effects = effects;
+        this.Ingredients = ingredients.OrderBy(i => i).ToArray();
+        this.Effects = effects.OrderBy(e => e).ToArray();
 
         if (isBadPredicate != null)
         {

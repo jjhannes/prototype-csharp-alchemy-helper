@@ -221,6 +221,12 @@ public class StaticDictionaryMediator : IMediator
             }
         }
 
+        viableRecipes = viableRecipes
+            .OrderBy(vr => vr.BadEffects.Count())
+            .ThenBy(vr => vr.Ingredients.Count())
+            .ThenByDescending(vr => vr.GoodEffects.Count())
+            .ToList();
+
         return viableRecipes;
     }
 
