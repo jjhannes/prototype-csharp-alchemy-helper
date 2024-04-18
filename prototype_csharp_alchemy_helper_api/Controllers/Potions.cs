@@ -10,7 +10,8 @@ public class Potions : Controller
     readonly Dictionary<string, string> parameterNames = new Dictionary<string, string>
     {
         { "desiredEffects", "de" },
-        { "excludedIngredients", "ei" }
+        { "excludedIngredients", "ei" },
+        { "excludeBadPotions", "ebp" }
     };
 
     private IMediator _mediator;
@@ -26,6 +27,7 @@ public class Potions : Controller
     {
         string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
         string? rawExcludedIngredients = this.HttpContext.Request.Query[this.parameterNames["excludedIngredients"]];
+        string? rawExcludeBadPotions = this.HttpContext.Request.Query[this.parameterNames["excludeBadPotions"]];
 
         if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
         {
@@ -37,6 +39,7 @@ public class Potions : Controller
             .Select(de => de.Trim())
             .ToArray();
         string[] excludedIngredients = new string[0];
+        bool excludeBadPotions = false;
 
         if (rawExcludedIngredients != null && rawExcludedIngredients.Length > 0)
         {
@@ -46,7 +49,14 @@ public class Potions : Controller
                 .ToArray();
         }
 
-        IEnumerable<Recipe> viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients);
+        if (!string.IsNullOrEmpty(rawExcludeBadPotions))
+        {
+            excludeBadPotions = 
+                rawExcludeBadPotions.ToLower() == "true" ||
+                rawExcludeBadPotions.ToLower() == "1";
+        }
+
+        IEnumerable<Recipe> viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions);
         CollectionResponse<Recipe> responsePayload = new CollectionResponse<Recipe>(viableRecipes);
 
         return new OkObjectResult(responsePayload);

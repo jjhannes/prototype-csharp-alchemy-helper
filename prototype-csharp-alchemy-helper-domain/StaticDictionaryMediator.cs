@@ -97,11 +97,14 @@ public class StaticDictionaryMediator : IMediator
     }
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
-        => this.DetermineRecipe(desiredEffects, new string[0]);
+        => this.DetermineRecipe(desiredEffects, new string[0], false);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients)
+        => this.DetermineRecipe(desiredEffects, excludedIngredients, false);
+
+    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions)
     {
-        List<Recipe> recipe = new List<Recipe>();
+        List<Recipe> viableRecipes = new List<Recipe>();
         string[] possibleIngredients = this.GetIngredientsWithEffects(desiredEffects);
 
         if (excludedIngredients.Any())
@@ -130,7 +133,7 @@ public class StaticDictionaryMediator : IMediator
 
                 if (desiredEffects.All(de => commonEffects.Contains(de)))
                 {
-                    recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient ], commonEffects, this.IsBadEffect));
+                    viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient ], commonEffects, this.IsBadEffect));
                 }
             }
         }
@@ -151,7 +154,7 @@ public class StaticDictionaryMediator : IMediator
 
                     if (desiredEffects.All(de => commonEffects.Contains(de)))
                     {
-                        recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects, this.IsBadEffect));
+                        viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects, this.IsBadEffect));
                     }
                 }
             }
@@ -177,14 +180,28 @@ public class StaticDictionaryMediator : IMediator
 
                         if (desiredEffects.All(de => commonEffects.Contains(de)))
                         {
-                            recipe.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects, this.IsBadEffect));
+                            viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects, this.IsBadEffect));
                         }
                     }
                 }
             }
         }
 
-        return recipe;
+        if (excludeBadPotions)
+        {
+            int countBeforeFilter = viableRecipes.Count;
+
+            viableRecipes = viableRecipes
+                .Where(vr => !vr.BadEffects.Any())
+                .ToList();
+
+            if (countBeforeFilter != viableRecipes.Count)
+            {
+                this._logger.LogWarning($"${countBeforeFilter - viableRecipes.Count} of ${countBeforeFilter} recipies with bad effects filtered out.");
+            }
+        }
+
+        return viableRecipes;
     }
 
 }

@@ -52,5 +52,27 @@ public class TestStaticDictionaryMediator_Publics
                 Assert.Fail($"{nameof(this._mediator)} is not initialised");
             }
         }
+
+        [TestMethod]
+        [DataRow(new string[] { "Swift Swim", "Water Breathing", "Restore Fatigue" }, new string[] { "Daedra Skin", "Golden Sedge Flowers", "Pearl" }, 2, 2)]
+        [DataRow(new string[] { "Fortify Speed", "Water Walking" }, new string[] { "Meadow Rye", "Nirthfly Stalks", "Moon Sugar", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt" }, 6, 0)]
+        [DataRow(new string[] { "Restore Health", "Fortify Health" }, new string[] { "Human Flesh", "Corprus Weepings", "Vampire Dust", "Emerald", "Raw Stalhrim", "Sweetpulp" }, 10, 3)]
+        [DataRow(new string[] { "Restore Magicka", "Fortify Magicka" }, new string[] { "Adamantium Ore", "Heartwood", "Frost Salts", "Void Salts", "Emerald" }, 9, 9)]
+        public void DesiredEffectsExcludeIngredientsGivesXRecipesWithDesiredEffectsAndYRecipesExcludingBadPotions(string[] desiredEffects, string[] excludedIngredients, int expectedRecipeCount, int expectedGoodPotionRecipeCount)
+        {
+            if (this._mediator != null)
+            {
+                var viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients);
+                var viableGoodRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients, true);
+
+                Assert.AreEqual(expectedRecipeCount, viableRecipes.Count());
+                Assert.AreEqual(expectedGoodPotionRecipeCount, viableGoodRecipes.Count());
+                Assert.IsTrue(viableRecipes.All(r => desiredEffects.All(de => r.Effects.Any(re => re == de))));
+            }
+            else
+            {
+                Assert.Fail($"{nameof(this._mediator)} is not initialised");
+            }
+        }
     }
 }
