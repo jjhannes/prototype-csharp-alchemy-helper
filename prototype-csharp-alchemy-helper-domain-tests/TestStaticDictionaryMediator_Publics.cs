@@ -1,10 +1,12 @@
-﻿namespace prototype_csharp_alchemy_helper_domain_tests;
+﻿using prototype_csharp_alchemy_helper_domain;
+
+namespace prototype_csharp_alchemy_helper_domain_tests;
 
 [TestClass]
 public class TestStaticDictionaryMediator_Publics
 {
     [TestClass]
-    public class DetermineRecipe : BaseStaticDictionaryMediatorTester
+    public class GetRecipesWithDesiredEffects : BaseStaticDictionaryMediatorTester
     {
         [TestMethod]
         [DataRow(new string[] { "Swift Swim", "Water Breathing", "Restore Fatigue" }, 9)]
@@ -20,7 +22,7 @@ public class TestStaticDictionaryMediator_Publics
         {
             if (this._mediator != null)
             {
-                var viableRecipes = this._mediator.DetermineRecipe(desiredEffects);
+                var viableRecipes = this._mediator.GetRecipesWithDesiredEffects(desiredEffects);
 
                 Assert.AreEqual(expectedRecipeCount, viableRecipes.Count());
                 Assert.IsTrue(viableRecipes.All(r => desiredEffects.All(de => r.Effects.Any(re => re == de))));
@@ -97,4 +99,25 @@ public class TestStaticDictionaryMediator_Publics
             }
         }
     }
+
+    [TestClass]
+    public class GetRecipeFromIngedients : BaseStaticDictionaryMediatorTester
+    {
+        [TestMethod]
+        [DataRow(new string[] { "Bread", "Hound Meat" }, new string[] { "Restore Fatigue" })]
+        [DataRow(new string[] { "Corprus Weepings", "Small Corprusmeat Hunk" }, new string[] { "Drain Fatigue" })]
+        [DataRow(new string[] { "Bread", "Corprus Weepings" }, new string[] {  })]
+        public void FromGivenIngredientsExpectGivenEffects(string[] givenIngredients, string[] givenEffects)
+        {
+            Recipe resultingRecipe = this._mediator.GetRecipeFromIngedients(givenIngredients);
+
+            Assert.AreEqual(givenEffects.Count(), resultingRecipe.Effects.Count());
+
+            if (resultingRecipe.Effects.Count() > 0)
+            {
+                Assert.IsTrue(new HashSet<string>(resultingRecipe.Effects).SetEquals(givenEffects));
+            }
+        }
+    }
+
 }

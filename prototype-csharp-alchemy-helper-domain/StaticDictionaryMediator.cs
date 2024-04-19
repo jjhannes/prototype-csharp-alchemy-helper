@@ -96,19 +96,19 @@ public class StaticDictionaryMediator : IMediator
             .ToArray();
     }
 
-    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects)
-        => this.DetermineRecipe(desiredEffects, new string[0], false, false);
+    public IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects)
+        => this.GetRecipesWithDesiredEffects(desiredEffects, new string[0], false, false);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, bool exactlyMatchDesiredEffects)
-        => this.DetermineRecipe(desiredEffects, new string[0], false, exactlyMatchDesiredEffects);
+        => this.GetRecipesWithDesiredEffects(desiredEffects, new string[0], false, exactlyMatchDesiredEffects);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients)
-        => this.DetermineRecipe(desiredEffects, excludedIngredients, false, false);
+        => this.GetRecipesWithDesiredEffects(desiredEffects, excludedIngredients, false, false);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions)
-        => this.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, false);
+        => this.GetRecipesWithDesiredEffects(desiredEffects, excludedIngredients, excludeBadPotions, false);
 
-    public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects)
+    public IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects)
     {
         List<Recipe> viableRecipes = new List<Recipe>();
         string[] possibleIngredients = this.GetIngredientsWithEffects(desiredEffects);
@@ -228,6 +228,14 @@ public class StaticDictionaryMediator : IMediator
             .ToList();
 
         return viableRecipes;
+    }
+
+    public Recipe GetRecipeFromIngedients(string[] ingredients)
+    {
+        string[] commonEffects = this.GetCommonEffects(ingredients);
+        Recipe resultingResipe = new Recipe(ingredients, commonEffects, this.IsBadEffect);
+        
+        return resultingResipe;
     }
 
 }

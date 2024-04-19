@@ -56,7 +56,7 @@ internal partial class Program
             }
         }
         
-        IEnumerable<Recipe> possibleRecipes = Program._mediator.DetermineRecipe(desiredEffects.ToArray());
+        IEnumerable<Recipe> possibleRecipes = Program._mediator.GetRecipesWithDesiredEffects(desiredEffects.ToArray());
 
         if (possibleRecipes.Count() < 1)
         {

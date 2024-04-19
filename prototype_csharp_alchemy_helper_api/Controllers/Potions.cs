@@ -12,7 +12,8 @@ public class Potions : Controller
         { "desiredEffects", "de" },
         { "excludedIngredients", "ei" },
         { "excludeBadPotions", "ebp" },
-        { "exactlyMatchDesiredEffects", "emde" }
+        { "exactlyMatchDesiredEffects", "emde" },
+        { "ingredients", "i" }
     };
 
     private IMediator _mediator;
@@ -23,7 +24,7 @@ public class Potions : Controller
     }
 
     [HttpGet]
-    [Route("/csapi/v1/potions/recipes/with-effects")]
+    [Route($"{Constants.ApiBasePath}/potions/recipes/with-effects")]
     public ActionResult GetRecipesGivenDesiredEffects()
     {
         string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
@@ -33,7 +34,7 @@ public class Potions : Controller
 
         if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
         {
-            return new BadRequestResult();
+            return new BadRequestObjectResult($"Desired effects ({parameterNames["desiredEffects"]}) are required");
         }
 
         string[] desiredEffects = rawDesiredEffects
@@ -66,9 +67,40 @@ public class Potions : Controller
                 rawExactlyMatchDesiredEffects.ToLower() == "1";
         }
 
-        IEnumerable<Recipe> viableRecipes = this._mediator.DetermineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
+        IEnumerable<Recipe> viableRecipes = this._mediator.GetRecipesWithDesiredEffects(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
         CollectionResponse<Recipe> responsePayload = new CollectionResponse<Recipe>(viableRecipes);
 
         return new OkObjectResult(responsePayload);
     }
+
+    [HttpGet]
+    [Route($"{Constants.ApiBasePath}/potions/from-ingredients")]
+    public ActionResult GetRecipeFromIngredients()
+    {
+        string? rawIngredients = this.HttpContext.Request.Query[parameterNames["ingredients"]];
+
+        if (string.IsNullOrEmpty(rawIngredients))
+        {
+            return new BadRequestObjectResult($"Ingredients ({parameterNames["ingredients"]}) are required");
+        }
+
+        string[] ingredients = rawIngredients
+            .Split(",")
+            .Select(i => i.Trim())
+            .ToArray();
+
+        if (ingredients.Count() < 2)
+        {
+            return new BadRequestObjectResult($"A minimum of 2 ingredients are required");
+        }
+        else if (ingredients.Count() > 4)
+        {
+            return new BadRequestObjectResult($"A maximum of 4 ingredients are allowed");
+        }
+
+        Recipe resultingRecipe = this._mediator.GetRecipeFromIngedients(ingredients);
+
+        return new OkObjectResult(resultingRecipe);
+    }
+
 }
