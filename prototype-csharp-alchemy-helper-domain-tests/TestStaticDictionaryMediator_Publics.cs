@@ -120,4 +120,36 @@ public class TestStaticDictionaryMediator_Publics
         }
     }
 
+    [TestClass]
+    public class Validation : BaseStaticDictionaryMediatorTester
+    {
+        [TestMethod]
+        [DataRow(new string[] { "Hound Meat" }, new string[0])]
+        [DataRow(new string[] { "Comberry", "Rat Meat" }, new string[0])]
+        [DataRow(new string[] { "Belladonna Berries", "Crab Meat" }, new string[0])]
+        [DataRow(new string[] { "Kresh Fiber", "Diamond", "Kaas" }, new string[] { "Kaas" })]
+        [DataRow(new string[] { "Chokeweed", "Emerald", "Bacon", "Mayo" }, new string[] { "Bacon", "Mayo" })]
+        public void ValidateIngredients(string[] givenIngredients, string[] expectedInvalidIngredients)
+        {
+            IEnumerable<string> invalidIngredients = this._mediator.ValidateIngredients(givenIngredients);
+
+            Assert.AreEqual(expectedInvalidIngredients.Count(), invalidIngredients.Count());
+            Assert.IsTrue(new HashSet<string>(invalidIngredients).SetEquals(expectedInvalidIngredients));
+        }
+
+        [TestMethod]
+        [DataRow(new string[] { "Restore Fatigue" }, new string[0])]
+        [DataRow(new string[] { "Restore Health", "Cure Poison" }, new string[0])]
+        [DataRow(new string[] { "Restore Magicka", "Cure Common Disease", "Resist Common Disease" }, new string[0])]
+        [DataRow(new string[] { "Fortify Health", "Levitate", "Power" }, new string[] { "Power" })]
+        [DataRow(new string[] { "Fortify Magicka", "Blahblah", "Foo" }, new string[] { "Blahblah", "Foo" })]
+        public void ValidateEffects(string[] givenEffects, string[] expectedInvalidEffects)
+        {
+            IEnumerable<string> invalidEffects = this._mediator.ValidateEffects(givenEffects);
+
+            Assert.AreEqual(expectedInvalidEffects.Count(), invalidEffects.Count());
+            Assert.IsTrue(new HashSet<string>(invalidEffects).SetEquals(expectedInvalidEffects));
+        }
+    }
+
 }

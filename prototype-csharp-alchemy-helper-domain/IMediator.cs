@@ -2,6 +2,10 @@
 
 public interface IMediator
 {
+    IEnumerable<string> ValidateIngredients(string[] ingredients);
+
+    IEnumerable<string> ValidateEffects(string[] effects);
+
     IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects);
     
     IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects);

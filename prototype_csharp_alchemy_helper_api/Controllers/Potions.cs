@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using prototype_csharp_alchemy_helper_domain;
 
@@ -41,6 +42,13 @@ public class Potions : Controller
             .Split(",")
             .Select(de => de.Trim())
             .ToArray();
+        string[] invalidEffects = this._mediator.ValidateEffects(desiredEffects).ToArray();
+
+        if (invalidEffects.Any())
+        {
+            return new BadRequestObjectResult($"Invalid desired effects provided: [{string.Join(", ", invalidEffects)}]");
+        }
+
         string[] excludedIngredients = new string[0];
         bool excludeBadPotions = false;
         bool exactlyMatchDesiredEffects = false;
@@ -88,6 +96,12 @@ public class Potions : Controller
             .Split(",")
             .Select(i => i.Trim())
             .ToArray();
+        string[] invalidIngredients = this._mediator.ValidateIngredients(ingredients).ToArray();
+
+        if (invalidIngredients.Any())
+        {
+            return new BadRequestObjectResult($"Invalid ingredients were provided: [{string.Join(", ", invalidIngredients)}]");
+        }
 
         if (ingredients.Count() < 2)
         {

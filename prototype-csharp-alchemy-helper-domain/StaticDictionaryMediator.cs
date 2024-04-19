@@ -66,15 +66,13 @@ public class StaticDictionaryMediator : IMediator
         return commonEffects.ToArray();
     }
     
-    [Obsolete]
-    internal bool IsIngredient(string ingredient)
+    private bool IsIngredient(string ingredient)
     {
         return this._datastore.GetEverything()
             .ContainsKey(ingredient);
     }
 
-    [Obsolete]
-    internal bool IsEffect(string effect)
+    private bool IsEffect(string effect)
     {
         return this._datastore.GetEverything()
             .SelectMany(i => i.Value)
@@ -94,6 +92,34 @@ public class StaticDictionaryMediator : IMediator
             .Where(i => i.Value.Intersect(effects).Any())
             .Select(i => i.Key)
             .ToArray();
+    }
+
+    /// <summary>
+    /// Takes a collection of ingredients and returns any ingredients that are invalid.
+    /// That means if the resulting collection is empty, all given ingredients are valid.
+    /// Conversely, if the any items are returned, those ingredients are invalid
+    /// </summary>
+    /// <param name="ingredients"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public IEnumerable<string> ValidateIngredients(string[] ingredients)
+    {
+        return ingredients
+            .Where(i => !this.IsIngredient(i));
+    }
+
+    /// <summary>
+    /// Takes a collection of effects and returns any effects that are invalid.
+    /// That means if the resulting collection is empty, all given effects are valid.
+    /// Conversely, if the any items are returned, those effects are invalid
+    /// </summary>
+    /// <param name="effects"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public IEnumerable<string> ValidateEffects(string[] effects)
+    {
+        return effects
+            .Where(e => !this.IsEffect(e));
     }
 
     public IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects)
