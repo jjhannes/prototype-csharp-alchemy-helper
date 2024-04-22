@@ -62,6 +62,8 @@ public class TestStaticDictionaryMediator_Internals
     {
         [TestMethod]
         [DataRow(new string[] { "Comberry", "Adamantium Ore" }, new string[] { "Reflect", "Restore Magicka" })]
+        [DataRow(new string[] { "WOLFSBANE PETALS", "bittergreen petals" }, new string[] { "Restore Intelligence", "Invisibility", "Drain Magicka", "Drain Endurance" })]
+        [DataRow(new string[] { "ALIT HIDE", "bonemeal", "ScUtTlE" }, new string[] { "Telekinesis" })]
         public void IngredientsMustHaveAllAndOnlyExpectedEffects_ShouldBeTrue(string[] ingredients, string[] expectedEffects)
         {
             if (this._mediator != null)

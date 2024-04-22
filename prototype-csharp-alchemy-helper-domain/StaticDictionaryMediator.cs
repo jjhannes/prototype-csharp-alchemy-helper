@@ -36,8 +36,9 @@ public class StaticDictionaryMediator : IMediator
 
     internal string[] GetCommonEffects(string[] ingredients)
     {
-        List<KeyValuePair<string, string[]>> filteredIngredients = this._datastore.GetEverything()
-            .Where(i => ingredients.Contains(i.Key))
+        List<KeyValuePair<string, string[]>> filteredIngredients = this._datastore
+            .GetEverything()
+            .Where(i => ingredients.Contains(i.Key, StringComparer.InvariantCultureIgnoreCase))
             .ToList();
 
         List<string> commonEffects = new List<string>();
@@ -50,7 +51,9 @@ public class StaticDictionaryMediator : IMediator
             {
                 KeyValuePair<string, string[]> secondaryIngredient = filteredIngredients[secondary];
 
-                string[] matches = primaryIngredient.Value.Intersect(secondaryIngredient.Value).ToArray();
+                string[] matches = primaryIngredient.Value
+                    .Where(pe => secondaryIngredient.Value.Any(se => se.Equals(pe, StringComparison.InvariantCultureIgnoreCase)))
+                    .ToArray();
 
                 foreach (string match in matches)
                 {
