@@ -85,7 +85,6 @@ public class StaticDictionaryMediator : IMediator
     {
         return this._datastore
             .GetEverything()
-            //.Where(i => i.Value.Intersect(effects).Any())
             .Where(i => i.Value.Any(ie => effects.Any(ge => ge.Equals(ie, StringComparison.InvariantCultureIgnoreCase))))
             .Select(i => i.Key)
             .ToArray();
