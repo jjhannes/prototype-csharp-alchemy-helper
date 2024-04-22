@@ -18,21 +18,20 @@ public class StaticDictionaryMediator : IMediator
 
     internal bool IsBadEffect(string effect)
     {
-        effect = effect.ToLower();
-
-        if (effect.Contains("cure") || effect.Contains("resist"))
+        if (effect.Contains("cure", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("resist", StringComparison.InvariantCultureIgnoreCase))
         {
             return false;
         }
 
-        return effect.Contains("burden") ||
-            effect.Contains("poison") ||
-            effect.Contains("blind") ||
-            effect.Contains("damage") ||
-            effect.Contains("drain") ||
-            effect.Contains("paralyz") ||
-            effect.Contains("weakness") ||
-            effect.Contains("vampirism");
+        return effect.Contains("burden", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("poison", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("blind", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("damage", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("drain", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("paralyz", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("weakness", StringComparison.InvariantCultureIgnoreCase) ||
+            effect.Contains("vampirism", StringComparison.InvariantCultureIgnoreCase);
     }
 
     internal string[] GetCommonEffects(string[] ingredients)
@@ -66,18 +65,20 @@ public class StaticDictionaryMediator : IMediator
         return commonEffects.ToArray();
     }
     
-    private bool IsIngredient(string ingredient)
+    internal bool IsIngredient(string ingredient)
     {
-        return this._datastore.GetEverything()
-            .ContainsKey(ingredient);
+        return this._datastore
+            .GetEverything()
+            .Keys
+            .Any(k => k.Equals(ingredient, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private bool IsEffect(string effect)
+    internal bool IsEffect(string effect)
     {
         return this._datastore.GetEverything()
             .SelectMany(i => i.Value)
             .Distinct()
-            .Any(e => e == effect);
+            .Any(e => e.Equals(effect, StringComparison.InvariantCultureIgnoreCase));
     }
 
     [Obsolete]

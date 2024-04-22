@@ -118,4 +118,109 @@ public class TestStaticDictionaryMediator_Internals
         }
     }
 
+    [TestClass]
+    public class IsIngredient : BaseStaticDictionaryMediatorTester
+    {
+        private StaticDictionaryMediator? _explicitMediator;
+
+        [TestInitialize]
+        public void InitialiseTests()
+        {
+            this._explicitMediator = (StaticDictionaryMediator)this._mediator;
+        }
+
+        [TestMethod]
+        [DataRow("Ash Salts")]
+        [DataRow("bread")]
+        [DataRow("Guar HIDE")]
+        [DataRow("METEOR Slime")]
+        [DataRow("Scrib CabBAGE")]
+        [DataRow("TraMA Root")]
+        public void ValidIngredients(string ingredient)
+        {
+            if (this._explicitMediator == null)
+            {
+                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
+            }
+
+            bool isIngredient = this._explicitMediator.IsIngredient(ingredient);
+
+            Assert.IsTrue(isIngredient);
+        }
+
+        [TestMethod]
+        [DataRow("Kaas")]
+        [DataRow("Bacon")]
+        [DataRow("Kouse")]
+        [DataRow("Melk")]
+        [DataRow("Koffie")]
+        [DataRow("Jou ma")]
+        public void InvalidIngredients(string ingredient)
+        {
+            if (this._explicitMediator == null)
+            {
+                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
+            }
+
+            bool isIngredient = this._explicitMediator.IsIngredient(ingredient);
+
+            Assert.IsFalse(isIngredient);
+        }
+    }
+
+    [TestClass]
+    public class IsEffect : BaseStaticDictionaryMediatorTester
+    {
+        private StaticDictionaryMediator? _explicitMediator;
+
+        [TestInitialize]
+        public void InitialiseTests()
+        {
+            this._explicitMediator = (StaticDictionaryMediator)this._mediator;
+        }
+
+        [TestMethod]
+        [DataRow("Detect Animal")]
+        [DataRow("Resist Frost")]
+        [DataRow("DRAIN Fatigue")]
+        [DataRow("Night EYE")]
+        [DataRow("WATER BREATHING")]
+        [DataRow("cure common disease")]
+        [DataRow("paralYZE")]
+        [DataRow("Resist Shock")]
+        [DataRow("TELEKinesis")]
+        [DataRow("Invisibility")]
+        public void ValidEffects(string ingredient)
+        {
+            if (this._explicitMediator == null)
+            {
+                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
+            }
+
+            bool isEffect = this._explicitMediator.IsEffect(ingredient);
+
+            Assert.IsTrue(isEffect);
+        }
+
+        [TestMethod]
+        [DataRow("Slaap")]
+        [DataRow("Loop")]
+        [DataRow("Blahblah")]
+        [DataRow("Blahblah")]
+        [DataRow("Moeg")]
+        [DataRow("Opgewonde")]
+        [DataRow("Jou pa")]
+        public void InvalidEffects(string ingredient)
+        {
+            if (this._explicitMediator == null)
+            {
+                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
+            }
+
+            bool isEffect = this._explicitMediator.IsEffect(ingredient);
+
+            Assert.IsFalse(isEffect);
+        }
+    }
+
 }
