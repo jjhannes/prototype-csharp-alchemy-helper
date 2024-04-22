@@ -81,12 +81,6 @@ public class StaticDictionaryMediator : IMediator
             .Any(e => e.Equals(effect, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    [Obsolete]
-    internal string[] GetIngredientEffects(string ingredient)
-    {
-        return this._datastore.GetEverything()[ingredient];
-    }
-
     internal string[] GetIngredientsWithEffects(string[] effects)
     {
         return this._datastore.GetEverything()
