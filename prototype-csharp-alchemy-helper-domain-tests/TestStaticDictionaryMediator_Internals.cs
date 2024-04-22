@@ -102,6 +102,10 @@ public class TestStaticDictionaryMediator_Internals
         [DataRow(new string[] { "Telekinesis" }, new string[] { "Alit Hide", "Bonemeal", "Scuttle" })]
         [DataRow(new string[] { "Vampirism" }, new string[] { "Vampire Dust" })]
         [DataRow(new string[] { "Dispel" }, new string[] { "Timsa-Come-By flowers", "Pearl", "Moon Sugar", "Bungler's Bane" })]
+        [DataRow(new string[] { "Dispel" }, new string[] { "Timsa-Come-By flowers", "Pearl", "Moon Sugar", "Bungler's Bane" })]
+        [DataRow(new string[] { "night eye" }, new string[] { "Bear Pelt", "Daedra's Heart", "Grahl Eyeball", "Kagouti Hide", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt" })]
+        [DataRow(new string[] { "CURE PARALYZATION" }, new string[] { "Willow Anther", "Scamp Skin", "Netch Leather", "Corkbulb Root" })]
+        [DataRow(new string[] { "InViSiBiLiTy" }, new string[] { "Bittergreen Petals", "Diamond", "Lloramor Spines", "Wolfsbane Petals" })]
         public void IngredientMustHaveAllAndOnlyExpectedEffects(string[] effects, string[] expectedIngredients)
         {
             if (this._mediator != null)
@@ -121,14 +125,6 @@ public class TestStaticDictionaryMediator_Internals
     [TestClass]
     public class IsIngredient : BaseStaticDictionaryMediatorTester
     {
-        private StaticDictionaryMediator? _explicitMediator;
-
-        [TestInitialize]
-        public void InitialiseTests()
-        {
-            this._explicitMediator = (StaticDictionaryMediator)this._mediator;
-        }
-
         [TestMethod]
         [DataRow("Ash Salts")]
         [DataRow("bread")]
@@ -138,12 +134,7 @@ public class TestStaticDictionaryMediator_Internals
         [DataRow("TraMA Root")]
         public void ValidIngredients(string ingredient)
         {
-            if (this._explicitMediator == null)
-            {
-                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
-            }
-
-            bool isIngredient = this._explicitMediator.IsIngredient(ingredient);
+            bool isIngredient = this._mediator.IsIngredient(ingredient);
 
             Assert.IsTrue(isIngredient);
         }
@@ -157,12 +148,7 @@ public class TestStaticDictionaryMediator_Internals
         [DataRow("Jou ma")]
         public void InvalidIngredients(string ingredient)
         {
-            if (this._explicitMediator == null)
-            {
-                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
-            }
-
-            bool isIngredient = this._explicitMediator.IsIngredient(ingredient);
+            bool isIngredient = this._mediator.IsIngredient(ingredient);
 
             Assert.IsFalse(isIngredient);
         }
@@ -171,14 +157,6 @@ public class TestStaticDictionaryMediator_Internals
     [TestClass]
     public class IsEffect : BaseStaticDictionaryMediatorTester
     {
-        private StaticDictionaryMediator? _explicitMediator;
-
-        [TestInitialize]
-        public void InitialiseTests()
-        {
-            this._explicitMediator = (StaticDictionaryMediator)this._mediator;
-        }
-
         [TestMethod]
         [DataRow("Detect Animal")]
         [DataRow("Resist Frost")]
@@ -192,12 +170,7 @@ public class TestStaticDictionaryMediator_Internals
         [DataRow("Invisibility")]
         public void ValidEffects(string ingredient)
         {
-            if (this._explicitMediator == null)
-            {
-                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
-            }
-
-            bool isEffect = this._explicitMediator.IsEffect(ingredient);
+            bool isEffect = this._mediator.IsEffect(ingredient);
 
             Assert.IsTrue(isEffect);
         }
@@ -212,12 +185,7 @@ public class TestStaticDictionaryMediator_Internals
         [DataRow("Jou pa")]
         public void InvalidEffects(string ingredient)
         {
-            if (this._explicitMediator == null)
-            {
-                Assert.Fail($"{nameof(this._explicitMediator)} not initialised");
-            }
-
-            bool isEffect = this._explicitMediator.IsEffect(ingredient);
+            bool isEffect = this._mediator.IsEffect(ingredient);
 
             Assert.IsFalse(isEffect);
         }
