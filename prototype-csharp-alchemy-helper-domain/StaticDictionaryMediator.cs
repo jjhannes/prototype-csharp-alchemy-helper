@@ -143,7 +143,7 @@ public class StaticDictionaryMediator : IMediator
             int countBeforeFilter = possibleIngredients.Count();
 
             possibleIngredients = possibleIngredients
-                .Where(pi => !excludedIngredients.Any(ei => ei == pi))
+                .Where(pi => !excludedIngredients.Any(ei => ei.Equals(pi, StringComparison.InvariantCultureIgnoreCase)))
                 .ToArray();
 
             if (countBeforeFilter != possibleIngredients.Count())
@@ -162,7 +162,7 @@ public class StaticDictionaryMediator : IMediator
                 string secondaryIngredient = possibleIngredients[secondary];
                 var commonEffects = this.GetCommonEffects([ primaryIngredient, secondaryIngredient ]);
 
-                if (desiredEffects.All(de => commonEffects.Contains(de)))
+                if (desiredEffects.All(de => commonEffects.Contains(de, StringComparer.InvariantCultureIgnoreCase)))
                 {
                     viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient ], commonEffects, this.IsBadEffect));
                 }
@@ -183,7 +183,7 @@ public class StaticDictionaryMediator : IMediator
                     string tertiaryIngredient = possibleIngredients[tertiary];
                     var commonEffects = this.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
 
-                    if (desiredEffects.All(de => commonEffects.Contains(de)))
+                    if (desiredEffects.All(de => commonEffects.Contains(de, StringComparer.InvariantCultureIgnoreCase)))
                     {
                         viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects, this.IsBadEffect));
                     }
@@ -209,7 +209,7 @@ public class StaticDictionaryMediator : IMediator
                         string quaternaryIngredient = possibleIngredients[quaternary];
                         var commonEffects = this.GetCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
 
-                        if (desiredEffects.All(de => commonEffects.Contains(de)))
+                        if (desiredEffects.All(de => commonEffects.Contains(de, StringComparer.InvariantCultureIgnoreCase)))
                         {
                             viableRecipes.Add(new Recipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects, this.IsBadEffect));
                         }
@@ -228,7 +228,7 @@ public class StaticDictionaryMediator : IMediator
 
             if (countBeforeFilter != viableRecipes.Count)
             {
-                this._logger.LogWarning($"${countBeforeFilter - viableRecipes.Count} of ${countBeforeFilter} recipies with bad effects filtered out.");
+                this._logger.LogWarning($"{countBeforeFilter - viableRecipes.Count} of ${countBeforeFilter} recipies with bad effects filtered out.");
             }
         }
 
@@ -258,7 +258,12 @@ public class StaticDictionaryMediator : IMediator
     public Recipe GetRecipeFromIngedients(string[] ingredients)
     {
         string[] commonEffects = this.GetCommonEffects(ingredients);
-        Recipe resultingResipe = new Recipe(ingredients, commonEffects, this.IsBadEffect);
+        string[] sourceIngredients = this._datastore
+            .GetEverything()
+            .Keys
+            .Where(k => ingredients.Contains(k, StringComparer.InvariantCultureIgnoreCase))
+            .ToArray();
+        Recipe resultingResipe = new Recipe(sourceIngredients, commonEffects, this.IsBadEffect);
         
         return resultingResipe;
     }
