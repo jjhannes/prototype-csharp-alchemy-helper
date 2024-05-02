@@ -1,1 +1,1 @@
-docker run -e ENV_PLATFORM=DOTNET_DOCKER -dp 127.0.0.1:16666:6666 prototype-csharp-alchemy-helper
+docker run -e ENV_PLATFORM=DOCKER -e ASPNETCORE_URLS=http://[::]:6666 -dp 16666:6666 prototype-csharp-alchemy-helper

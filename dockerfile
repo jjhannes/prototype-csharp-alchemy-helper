@@ -14,3 +14,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /prototype-csharp-alchemy-helper
 COPY ./prototype_csharp_alchemy_helper_api/bin/Release/net8.0/publish .
 ENTRYPOINT ["dotnet", "prototype_csharp_alchemy_helper_api.dll"]
+EXPOSE 6666
