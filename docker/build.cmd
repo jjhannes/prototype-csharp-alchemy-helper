@@ -1,0 +1,1 @@
+docker build -t prototype-csharp-alchemy-helper .
