@@ -5,16 +5,14 @@ using Microsoft.Extensions.Logging;
 [assembly: InternalsVisibleTo("prototype-csharp-alchemy-helper-domain-tests")]
 namespace prototype_csharp_alchemy_helper_domain;
 
-public class StaticDictionaryMediator : IMediator
+public class StaticDictionaryMediator : BaseMediator
 {
-    private readonly ILogger<StaticDictionaryMediator> _logger;
-    private readonly IRepo _datastore;
+    [Obsolete($"Repo ought to be injected. Repo will default to [{nameof(StaticDictionaryRepo)}].")]
+    public StaticDictionaryMediator(ILogger<IMediator> logger)
+        : base(logger, new StaticDictionaryRepo()) { }
 
-    public StaticDictionaryMediator(ILogger<StaticDictionaryMediator> logger)
-    {
-        this._logger = logger;
-        this._datastore = new StaticDictionaryRepo();
-    }
+    public StaticDictionaryMediator(ILogger<IMediator> logger, IRepo repo)
+        : base(logger, repo) { }
 
     internal bool IsBadEffect(string effect)
     {
@@ -36,7 +34,7 @@ public class StaticDictionaryMediator : IMediator
 
     internal string[] GetCommonEffects(string[] ingredients)
     {
-        List<KeyValuePair<string, string[]>> filteredIngredients = this._datastore
+        List<KeyValuePair<string, string[]>> filteredIngredients = this._repo
             .GetEverything()
             .Where(i => ingredients.Contains(i.Key, StringComparer.InvariantCultureIgnoreCase))
             .ToList();
@@ -70,7 +68,7 @@ public class StaticDictionaryMediator : IMediator
     
     internal bool IsIngredient(string ingredient)
     {
-        return this._datastore
+        return this._repo
             .GetEverything()
             .Keys
             .Any(k => k.Equals(ingredient, StringComparison.InvariantCultureIgnoreCase));
@@ -78,7 +76,7 @@ public class StaticDictionaryMediator : IMediator
 
     internal bool IsEffect(string effect)
     {
-        return this._datastore.GetEverything()
+        return this._repo.GetEverything()
             .SelectMany(i => i.Value)
             .Distinct()
             .Any(e => e.Equals(effect, StringComparison.InvariantCultureIgnoreCase));
@@ -86,7 +84,7 @@ public class StaticDictionaryMediator : IMediator
 
     internal string[] GetIngredientsWithEffects(string[] effects)
     {
-        return this._datastore
+        return this._repo
             .GetEverything()
             .Where(i => i.Value.Any(ie => effects.Any(ge => ge.Equals(ie, StringComparison.InvariantCultureIgnoreCase))))
             .Select(i => i.Key)
@@ -101,7 +99,7 @@ public class StaticDictionaryMediator : IMediator
     /// <param name="ingredients"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<string> ValidateIngredients(string[] ingredients)
+    public override IEnumerable<string> ValidateIngredients(string[] ingredients)
     {
         return ingredients
             .Where(i => !this.IsIngredient(i));
@@ -115,13 +113,13 @@ public class StaticDictionaryMediator : IMediator
     /// <param name="effects"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<string> ValidateEffects(string[] effects)
+    public override IEnumerable<string> ValidateEffects(string[] effects)
     {
         return effects
             .Where(e => !this.IsEffect(e));
     }
 
-    public IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects)
+    public override IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects)
         => this.GetRecipesWithDesiredEffects(desiredEffects, new string[0], false, false);
 
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, bool exactlyMatchDesiredEffects)
@@ -133,7 +131,7 @@ public class StaticDictionaryMediator : IMediator
     public IEnumerable<Recipe> DetermineRecipe(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions)
         => this.GetRecipesWithDesiredEffects(desiredEffects, excludedIngredients, excludeBadPotions, false);
 
-    public IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects)
+    public override IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects)
     {
         List<Recipe> viableRecipes = new List<Recipe>();
         string[] possibleIngredients = this.GetIngredientsWithEffects(desiredEffects);
@@ -255,10 +253,10 @@ public class StaticDictionaryMediator : IMediator
         return viableRecipes;
     }
 
-    public Recipe GetRecipeFromIngedients(string[] ingredients)
+    public override Recipe GetRecipeFromIngedients(string[] ingredients)
     {
         string[] commonEffects = this.GetCommonEffects(ingredients);
-        string[] sourceIngredients = this._datastore
+        string[] sourceIngredients = this._repo
             .GetEverything()
             .Keys
             .Where(k => ingredients.Contains(k, StringComparer.InvariantCultureIgnoreCase))

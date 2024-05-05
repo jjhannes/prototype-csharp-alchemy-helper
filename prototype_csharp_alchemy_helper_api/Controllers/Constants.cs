@@ -2,5 +2,5 @@
 
 public static class Constants
 {
-    public const string ApiBasePath = "/csapi/v1";
+    public const string ApiBasePath = "/csapi";
 }

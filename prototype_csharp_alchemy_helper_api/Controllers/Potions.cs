@@ -15,16 +15,17 @@ public class Potions : Controller
         { "ingredients", "i" }
     };
 
-    private IMediator _mediator;
+    private readonly ILogger<Potions> _logger;
+    private readonly IMediator _mediator;
     
-    public Potions(IMediator mediator)
+    public Potions(ILogger<Potions> logger, IMediator mediator)
     {
+        this._logger = logger;
         this._mediator = mediator;
     }
 
-    [HttpGet]
-    [Route($"{Constants.ApiBasePath}/potions/recipes/with-effects")]
-    public ActionResult GetRecipesGivenDesiredEffects()
+    
+    private ActionResult GetRecipesGivenDesiredEffects()
     {
         string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
         string? rawExcludedIngredients = this.HttpContext.Request.Query[this.parameterNames["excludedIngredients"]];
@@ -79,9 +80,7 @@ public class Potions : Controller
         return new OkObjectResult(responsePayload);
     }
 
-    [HttpGet]
-    [Route($"{Constants.ApiBasePath}/potions/from-ingredients")]
-    public ActionResult GetRecipeFromIngredients()
+    private ActionResult GetRecipeFromIngredients()
     {
         string? rawIngredients = this.HttpContext.Request.Query[parameterNames["ingredients"]];
 
@@ -115,4 +114,31 @@ public class Potions : Controller
         return new OkObjectResult(resultingRecipe);
     }
 
+    [HttpGet]
+    [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/recipes/with-effects")]
+    [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/{{level}}/recipes/with-effects")]
+    public ActionResult GetRecipesGivenDesiredEffectsV2(string dataset, string? level)
+    {
+        return this.GetRecipesGivenDesiredEffects();
+    }
+
+    [HttpGet]
+    [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/from-ingredients")]
+    [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/{{level}}/from-ingredients")]
+    public ActionResult GetRecipeFromIngredientsV2(string dataset, string? level)
+    {
+        return this.GetRecipeFromIngredients();
+    }
+    
+    [Obsolete("Upgraded to v2.")]
+    [HttpGet]
+    [Route($"{Constants.ApiBasePath}/v1/potions/recipes/with-effects")]
+    public ActionResult GetRecipesFromDesiredEffects()
+        => this.GetRecipesGivenDesiredEffects();
+
+    [Obsolete("Upgraded to v2.")]
+    [HttpGet]
+    [Route($"{Constants.ApiBasePath}/v1/potions/from-ingredients")]
+    public ActionResult GetRecipesFromIngredients()
+        => this.GetRecipeFromIngredients();
 }
