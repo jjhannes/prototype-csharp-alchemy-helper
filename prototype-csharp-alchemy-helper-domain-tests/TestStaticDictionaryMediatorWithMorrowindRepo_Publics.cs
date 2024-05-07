@@ -1,12 +1,11 @@
 ﻿using prototype_csharp_alchemy_helper_domain;
-
 namespace prototype_csharp_alchemy_helper_domain_tests;
 
 [TestClass]
-public class TestStaticDictionaryMediator_Publics
+public class TestStaticDictionaryMediatorWithMorrowindRepo_Publics
 {
     [TestClass]
-    public class GetRecipesWithDesiredEffects : BaseStaticDictionaryMediatorTester
+    public class GetRecipesWithDesiredEffects : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow(new string[] { "Swift Swim", "Water Breathing", "Restore Fatigue" }, 9)]
@@ -101,7 +100,7 @@ public class TestStaticDictionaryMediator_Publics
     }
 
     [TestClass]
-    public class GetRecipeFromIngedients : BaseStaticDictionaryMediatorTester
+    public class GetRecipeFromIngedients : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow(new string[] { "Bread", "Hound Meat" }, new string[] { "Restore Fatigue" })]
@@ -121,7 +120,7 @@ public class TestStaticDictionaryMediator_Publics
     }
 
     [TestClass]
-    public class Validation : BaseStaticDictionaryMediatorTester
+    public class Validation : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow(new string[] { "Hound Meat" }, new string[0])]

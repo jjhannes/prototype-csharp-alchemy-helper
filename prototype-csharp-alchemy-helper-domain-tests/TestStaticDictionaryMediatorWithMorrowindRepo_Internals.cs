@@ -1,12 +1,10 @@
-using prototype_csharp_alchemy_helper_domain;
-
 namespace prototype_csharp_alchemy_helper_domain_tests;
 
 [TestClass]
-public class TestStaticDictionaryMediator_Internals
+public class TestStaticDictionaryMediatorWithMorrowindRepo_Internals
 {
     [TestClass]
-    public class IsBadEffect : BaseStaticDictionaryMediatorTester
+    public class IsBadEffect : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow("Cure Disease")]
@@ -58,7 +56,7 @@ public class TestStaticDictionaryMediator_Internals
     }
     
     [TestClass]
-    public class GetCommonEffects : BaseStaticDictionaryMediatorTester
+    public class GetCommonEffects : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow(new string[] { "Comberry", "Adamantium Ore" }, new string[] { "Reflect", "Restore Magicka" })]
@@ -98,7 +96,7 @@ public class TestStaticDictionaryMediator_Internals
     }
 
     [TestClass]
-    public class GetIngredientsWithEffects : BaseStaticDictionaryMediatorTester
+    public class GetIngredientsWithEffects : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow(new string[] { "Telekinesis" }, new string[] { "Alit Hide", "Bonemeal", "Scuttle" })]
@@ -125,7 +123,7 @@ public class TestStaticDictionaryMediator_Internals
     }
 
     [TestClass]
-    public class IsIngredient : BaseStaticDictionaryMediatorTester
+    public class IsIngredient : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow("Ash Salts")]
@@ -157,7 +155,7 @@ public class TestStaticDictionaryMediator_Internals
     }
 
     [TestClass]
-    public class IsEffect : BaseStaticDictionaryMediatorTester
+    public class IsEffect : BaseStaticDictionaryMediatorWithMorrowindRepoTester
     {
         [TestMethod]
         [DataRow("Detect Animal")]

@@ -12,10 +12,10 @@ enum DataSets
 
 enum Level
 {
-    apprentice,
-    journeyman,
-    expert,
-    master
+    apprentice = 1,
+    journeyman = 2,
+    expert = 3,
+    master = 4
 }
 
 public class RequestBasedMediatorFactory : IMediatorFactory

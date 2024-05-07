@@ -7,7 +7,7 @@ public class OblivionRepo : IRepo
 
     public OblivionRepo(int level)
     {
-        this._level = level + 1;
+        this._level = level;
         this._data = new Dictionary<string, string[]>()
         {
             { "Alkanet Flower", [ "Restore Intelligence", "Resist Poison", "Light", "Damage Fatigue" ] },
