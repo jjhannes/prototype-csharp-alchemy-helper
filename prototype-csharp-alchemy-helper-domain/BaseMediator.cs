@@ -25,4 +25,6 @@ public abstract class BaseMediator : IMediator
     public abstract IEnumerable<string> ValidateEffects(string[] effects);
 
     public abstract IEnumerable<string> ValidateIngredients(string[] ingredients);
+
+    public abstract Dictionary<string, string[]> GetIngredientsWithDesiredEffects(string[] desiredEffects);
 }

@@ -48,7 +48,7 @@ public class RequestBasedMediatorFactory : IMediatorFactory
                 method = nameof(method),
                 querystring = nameof(querystring);
 
-            string pattern = @$"\/(?<{language}>csapi)\/(?<{version}>v\d)\/(?<{dataset}>[a-zA-Z]+)\/(?<{entity}>potions)(\/(?<{level}>[a-zA-Z]+))?\/(?<{function}>recipes)\/(?<{method}>with-effects)(?<{querystring}>\?.*)?";
+            string pattern = @$"\/(?<{language}>csapi)\/(?<{version}>v\d)\/(?<{dataset}>[a-zA-Z]+)\/(?<{entity}>potions|ingredients)(\/(?<{level}>[a-zA-Z]+))?(\/(?<{function}>recipes))?\/(?<{method}>with-effects)(?<{querystring}>\?.*)?";
             Regex matcher = new Regex(pattern);
             Match match = matcher.Match(urlPath);
 

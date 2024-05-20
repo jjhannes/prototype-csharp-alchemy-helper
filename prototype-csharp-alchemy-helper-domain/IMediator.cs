@@ -11,4 +11,6 @@ public interface IMediator
     IEnumerable<Recipe> GetRecipesWithDesiredEffects(string[] desiredEffects, string[] excludedIngredients, bool excludeBadPotions, bool exactlyMatchDesiredEffects);
 
     Recipe GetRecipeFromIngedients(string[] ingredients);
+
+    Dictionary<string, string[]> GetIngredientsWithDesiredEffects(string[] desiredEffects);
 }

@@ -266,4 +266,27 @@ public class StaticDictionaryMediator : BaseMediator
         return resultingResipe;
     }
 
+    public override Dictionary<string, string[]> GetIngredientsWithDesiredEffects(string[] desiredEffects)
+    {
+        Dictionary<string, string[]> ingredientsWithDesiredEffects = this._repo
+            .GetEverything()
+            .Where(i => i.Value.Intersect(desiredEffects, StringComparer.CurrentCultureIgnoreCase).Any())
+            .ToDictionary();
+
+        Dictionary<string, string[]> desiredEffectsIngredients = desiredEffects
+            .Select(de => 
+            {
+                string key = de;
+                string[] value = ingredientsWithDesiredEffects
+                    .Where(iwde => iwde.Value.Contains(de, StringComparer.CurrentCultureIgnoreCase))
+                    .Select(iwde => iwde.Key)
+                    .ToArray();
+
+                return KeyValuePair.Create<string, string[]>(key, value);
+            })
+            .ToDictionary();
+
+        return desiredEffectsIngredients;
+    }
+
 }

@@ -115,6 +115,26 @@ public class Potions : Controller
     }
 
     [HttpGet]
+    [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/ingredients/{{level}}/with-effects")]
+    public ActionResult GetIngredientsWithEffects()
+    {
+        string? rawDesiredEffects = this.HttpContext.Request.Query[this.parameterNames["desiredEffects"]];
+
+        if (rawDesiredEffects == null || rawDesiredEffects.Length < 1)
+        {
+            return new BadRequestObjectResult($"Desired effects ({parameterNames["desiredEffects"]}) are required");
+        }
+
+        string[] desiredEffects = rawDesiredEffects
+            .Split(",")
+            .Select(de => de.Trim())
+            .ToArray();
+        Dictionary<string, string[]> desiredEffectsIngredients = this._mediator.GetIngredientsWithDesiredEffects(desiredEffects);
+
+        return new OkObjectResult(desiredEffectsIngredients);
+    }
+
+    [HttpGet]
     [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/recipes/with-effects")]
     [Route($"{Constants.ApiBasePath}/v2/{{dataset}}/potions/{{level}}/recipes/with-effects")]
     public ActionResult GetRecipesGivenDesiredEffectsV2(string dataset, string? level)
